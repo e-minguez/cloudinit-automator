@@ -1,0 +1,46 @@
+#cloud-config
+user: xxx
+password: xxxxxx
+chpasswd: {expire: False}
+ssh_pwauth: True
+ssh_authorized_keys:
+ - ssh-rsa XXXXXX
+
+runcmd:
+  - ln -s -f /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+  - sed -i -e 's/^KEYTABLE.*/KEYTABLE=es/g' -e 's/LAYOUT*/LAYOUT=es/g' /etc/sysconfig/keyboard
+  - sed -i -e 's/cloud-user/edu/g' /etc/sudoers
+  - chkconfig network on
+  - chkconfig cloud-config off
+  - chkconfig cloud-final off
+  - chkconfig cloud-init-local off
+  - chkconfig cloud-init off
+  - sleep 20 && eject /dev/cdrom && reboot
+
+write_files:
+  - content: |
+        # Generated in cloud-init
+        search rh.lan
+        nameserver 192.168.122.1
+    path: /etc/resolv.conf
+
+  - content: |
+        # Generated in cloud-init
+        DEVICE="eth0"
+        BOOTPROTO="static"
+        ONBOOT="yes"
+        TYPE="Ethernet"
+        USERCTL="yes"
+        PEERDNS="yes"
+        IPV6INIT="no"
+        GATEWAY="192.168.122.1"
+        NETMASK="255.255.255.0"
+        DNS1="192.168.122.1"
+        DOMAIN="rh.lan"
+        IPADDR=INSTANCEIP
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+
+# Early on
+bootcmd:
+ - ifdown eth0
+ - ifup eth0
