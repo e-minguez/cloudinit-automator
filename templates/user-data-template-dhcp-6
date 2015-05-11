@@ -1,0 +1,18 @@
+#cloud-config
+user: xxx
+password: xxxxxx
+chpasswd: {expire: False}
+ssh_pwauth: True
+ssh_authorized_keys:
+ - ssh-rsa XXXX
+
+runcmd:
+  - ln -s -f /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+  - sed -i -e 's/^KEYTABLE.*/KEYTABLE=es/g' -e 's/LAYOUT*/LAYOUT=es/g' /etc/sysconfig/keyboard
+  - sed -i -e 's/cloud-user/edu/g' /etc/sudoers
+  - chkconfig network on
+  - chkconfig cloud-config off
+  - chkconfig cloud-final off
+  - chkconfig cloud-init-local off
+  - chkconfig cloud-init off
+  - sleep 20 && eject /dev/cdrom && reboot
