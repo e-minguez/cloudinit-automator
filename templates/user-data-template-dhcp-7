@@ -1,0 +1,15 @@
+#cloud-config
+user: xxx
+password: xxxxxx
+chpasswd: {expire: False}
+ssh_pwauth: True
+ssh_authorized_keys:
+ - ssh-rsa XXX
+
+runcmd:
+  - timedatectl set-timezone Europe/Madrid
+  - localectl set-keymap es
+  - systemctl disable NetworkManager
+  - systemctl enable network
+  - systemctl disable cloud-config cloud-final cloud-init-local cloud-init cloud-config
+  - sleep 20 && eject /dev/cdrom && reboot
