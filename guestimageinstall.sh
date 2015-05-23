@@ -8,6 +8,9 @@
 #
 # Usage
 # guestimageinstall $nameofvm ($qcow2image)
+# 
+# TODO:
+# - Static IPs
 
 # Arguments
 NAME=$1
