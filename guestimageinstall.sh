@@ -1,9 +1,10 @@
 #!/bin/sh
 
 # guestimageinstall
+# Script to create a new vm based on a qcow2 image using cloudinit to customize it
 # version 0.01
-# Maintainer: Javier Ramirez jaramire@redhat.com
-# Based on Eduardo Minguez eminguez@redhat.com job
+# Maintainer: Javier Ramirez javilinux@gmail.com
+# Based on Eduardo Minguez job
 #
 # Usage
 # guestimageinstall $nameofvm ($qcow2image)
@@ -35,7 +36,7 @@ if [ -z "$QCOWIMAGE" ]
 	done
 fi
 
-# we choose the user data template based on the version of the qcow2 image 
+# we choose the user data template based on the version of the qcow2 image (RHEL 6 or RHEL 7) 
 VERSION=`echo ${QCOWIMAGE} | cut -d- -f2-4 | cut -d. -f1`
 USERDATATEMPLATEDHCP="/opt/cloudinit/user-data-${VERSION}"
 
@@ -46,13 +47,12 @@ sudo cp ${USERDATATEMPLATEDHCP} ${USERDATA}
 sudo sed -e "s/INSTANCEID/${NAME}/g" -e "s/HOSTNAME/${NAME}.${DOMAIN}/g" ${METADATATEMPLATE} > ${METADATA}
 
 # We generate the cloudinit iso
-#sudo rm -f ${CLOUDINITISO}
-#sudo genisoimage -input-charset iso8859-1 -output ${CLOUDINITISO} -volid cidata -joliet -rock ${USERDATA} ${METADATA}
+sudo rm -f ${CLOUDINITISO}
+sudo genisoimage -input-charset iso8859-1 -output ${CLOUDINITISO} -volid cidata -joliet -rock ${USERDATA} ${METADATA}
 
 # We copy the image and install it
 sudo cp ${QCOWIMAGE} ${STORAGE}${NAME}.qcow2
 
-#sudo virt-install -n ${NAME} --memory 1024 --disk ${STORAGE}${NAME}.qcow2 --cdrom ${CLOUDINITISO} --noautoconsole --wait 1
-sudo virt-install --import -n ${NAME} --memory 1024 --disk ${STORAGE}${NAME}.qcow2 --noautoconsole --wait 1
+sudo virt-install -n ${NAME} --memory 1024 --disk ${STORAGE}${NAME}.qcow2 --cdrom ${CLOUDINITISO} --noautoconsole --wait 1
 
 exit 0
