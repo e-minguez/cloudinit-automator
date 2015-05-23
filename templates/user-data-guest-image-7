@@ -1,0 +1,22 @@
+#cloud-config
+users: 
+  - name: jramirez
+    gecos: Javier Ramirez
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    groups: users,wheel
+    ssh_pwauth: True
+    ssh_authorized_keys:
+      - ssh-rsa XXXX
+chpasswd:
+  list: |
+    root:password
+    jramirez:password123
+  expire: False
+
+runcmd:
+  - timedatectl set-timezone Europe/Madrid
+  - localectl set-keymap uk
+  - systemctl disable NetworkManager
+  - systemctl enable network
+  - systemctl disable cloud-config cloud-final cloud-init-local cloud-init cloud-config ovirt-guest-agent
+  - sleep 20 && reboot

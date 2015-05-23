@@ -1,0 +1,24 @@
+#cloud-config
+users: 
+  - name: jramirez
+    gecos: Javier Ramirez
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    groups: users,wheel
+    ssh_pwauth: True
+    ssh_authorized_keys:
+      - ssh-rsa XXXX
+chpasswd:
+  list: |
+    root:password
+    jramirez:password123
+  expire: False
+runcmd:
+  - ln -s -f /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+  - sed -i -e 's/^KEYTABLE.*/KEYTABLE=uk/' -e 's/LAYOUT.*/LAYOUT=uk/' /etc/sysconfig/keyboard
+  - chkconfig network on
+  - chkconfig cloud-config off
+  - chkconfig cloud-final off
+  - chkconfig cloud-init-local off
+  - chkconfig cloud-init off
+  - chkconfig ovirt-guest-agent off
+  - sleep 20 && reboot
