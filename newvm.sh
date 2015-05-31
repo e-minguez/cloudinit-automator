@@ -7,8 +7,8 @@ IP=$4
 
 die()
 {
-  echo $1
-  exit $2
+    echo $1
+    exit $2
 }
 
 [ -z $OS ] && die "OS not found" 2
@@ -23,8 +23,8 @@ CLOUDINITDIR="/storage/software/cloudinit"
 TEMPLATESDIR="${CLOUDINITDIR}/templates"
 
 METADATATEMPLATE="${TEMPLATESDIR}/meta-data-template"
-USERDATATEMPLATESTATIC="${TEMPLATES}/user-data-template-static-${VERSION}"
-USERDATATEMPLATEDHCP="${TEMPLATES}/user-data-template-dhcp-${VERSION}"
+USERDATATEMPLATESTATIC="${TEMPLATESDIR}/user-data-template-static-${VERSION}"
+USERDATATEMPLATEDHCP="${TEMPLATESDIR}/user-data-template-dhcp-${VERSION}"
 
 METADATA="${CLOUDINITDIR}/meta-data"
 USERDATA="${CLOUDINITDIR}/user-data"
@@ -37,9 +37,10 @@ sed -e "s/INSTANCEID/${NAME}/g" -e "s/HOSTNAME/${NAME}.${DOMAIN}/g" ${METADATATE
 
 if [ -z ${IP} ]
 then
-  cp ${USERDATATEMPLATEDHCP} ${USERDATA}
+    cp ${USERDATATEMPLATEDHCP} ${USERDATA}
 else
-  sed -e "s/INSTANCEIP/${IP}/g" ${USERDATATEMPLATESTATIC} > ${USERDATA}
+    sed -e "s/INSTANCEIP/${IP}/g" ${USERDATATEMPLATESTATIC} > ${USERDATA}
+    echo "${IP} ${NAME}.${DOMAIN} ${NAME}" | sudo tee -a /etc/hosts > /dev/null
 fi
 
 rm -f ${CLOUDINITISO}
